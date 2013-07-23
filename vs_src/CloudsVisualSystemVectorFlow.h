@@ -1,29 +1,37 @@
-//
-//  emptyVisualSystem.h
-//
-//  Created by Patricio Gonzalez Vivo on 7/23/13.
-//
-//
-
 #pragma once
 
+#include "ofMain.h"
+#include "ofxUI.h"
 #include "CloudsVisualSystem.h"
 
-class emptyVisualSystem : public CloudsVisualSystem {
+
+class FlowParticle {
+  public:
+	FlowParticle(){
+		index = 0;
+		dead = false;
+	}
+	ofVec3f pos;
+	int index;
+	bool dead;
+};
+
+class CloudsVisualSystemVectorFlow : public CloudsVisualSystem {
 public:
-    
-    string getSystemName();
+	
+	CloudsVisualSystemVectorFlow();
+	
+	string getSystemName();
     
     void selfSetup();
     void selfSetupGuis();
     
-	void selfPresetLoaded(string presetPath);
-	
-    void selfAutoMode();
     void selfUpdate();
     void selfDrawBackground();
     void selfDrawDebug();
     void selfSceneTransformation();
+	void selfPresetLoaded(string presetPath);
+	
     void selfDraw();
     void selfExit();
     void selfBegin();
@@ -45,9 +53,31 @@ public:
     
     void selfSetupRenderGui();
     void guiRenderEvent(ofxUIEventArgs &e);
-    
+	
 protected:
-    
-    //  Your Stuff
-    //
+	
+	vector<FlowParticle> particles;
+	
+	int maxVertices;
+	ofVboMesh particleMesh;
+	ofVboMesh lines;
+	int trailLength;
+	float generateTrailLength;
+	float generateMaxVerts;
+	float particlesPerFrame;
+	
+	void addParticle();
+	
+	ofVec3f getDirection(float x, float y);
+	float getMagnitude(float x, float y);
+	
+	void initFlowField();
+	bool regenerateFlow;
+	float step;
+	float chaos;
+	int width, height;
+	float speed;
+	float maxLength;
+
+	float fieldAlpha;
 };
