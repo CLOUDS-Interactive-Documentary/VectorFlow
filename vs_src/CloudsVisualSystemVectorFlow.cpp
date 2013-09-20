@@ -7,7 +7,10 @@
 CloudsVisualSystemVectorFlow::CloudsVisualSystemVectorFlow(){
 	step = 50;
 	particlesPerFrame = 0;
-	
+	chaos = 0;
+	speed = 0;
+	sincPosition = ofVec2f(.5,.5);
+	sincRadius = 0;
 }
 
 //--------------------------------------------------------------
@@ -53,15 +56,12 @@ void CloudsVisualSystemVectorFlow::selfSetupGuis(){
 }
 
 void CloudsVisualSystemVectorFlow::selfUpdate(){
-	
-
-    
+	   
 	if(regenerateFlow){
 		regenerateFlow = false;
 		initFlowField();
 	}
     
-
 
 	//UPDATE PARTICLES
 	for(int i = 0; i < particlesPerFrame; i++){
@@ -82,7 +82,7 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 			particleMesh.getColors()[targetIndex].a = particleMesh.getNormals()[targetIndex].x;
 		}
 		
-		float magnitude = getMagnitude(cp.pos.y, cp.pos.x);
+		float magnitude = sampleField(cp.pos.y, cp.pos.x) * maxLength;
 		float magnorm = magnitude/maxLength;
 		float scaledHue = ofMap(magnorm, 0, 1, ofFloatColor::blue.getHue(), ofFloatColor::red.getHue());
 		cp.pos += getDirection(cp.pos.x, cp.pos.y) * magnitude;
@@ -112,9 +112,9 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 
 	for(int i = 0; i < lines.getVertices().size(); i += 2){
 		ofVec3f& vert = lines.getVertices()[i];
-		float length = getMagnitude(vert.x, vert.y);
-		lines.setVertex(i+1, vert + getDirection(vert.x, vert.y) * length);
-		ofFloatColor c = ofFloatColor::white.getLerped( ofFloatColor::red, (length-5)/maxLength );
+		float length = sampleField(vert.x, vert.y);
+		lines.setVertex(i+1, vert + getDirection(vert.x, vert.y) * length * fieldAmplitude * maxLength);
+		ofFloatColor c = ofFloatColor::white.getLerped( ofFloatColor::red, length );
 		c.a = fieldAlpha;
 		lines.setColor(i+1, c);
 	}
@@ -167,7 +167,6 @@ void CloudsVisualSystemVectorFlow::addParticle(){
 		particleMesh.addVertex( p.pos ); //p.index+trailLength+1
 		particleMesh.addColor( ofFloatColor(0,0,0,0) );
 		particleMesh.addNormal( ofVec3f(0,0,0) );
-
 		
 		particles.push_back(p);
 	}
@@ -176,15 +175,42 @@ void CloudsVisualSystemVectorFlow::addParticle(){
 }
 
 ofVec3f CloudsVisualSystemVectorFlow::getDirection(float x, float y){
-	float chaossqr = powf(chaos,2);	
-	return ofVec3f(0,1,0).getRotated( ofNoise(x/chaossqr + ofGetFrameNum()*speed, y/chaossqr)*360, ofVec3f(0,0,1) );
+//	return ofVec3f(0,1,0).getRotated( sampleField(x,y) * 360, ofVec3f(0,0,1) );
+	float ssWeight = 0;
+	float ssAngle = 0;
+	getSincSourceAngle(x,y,ssAngle,ssWeight);
+	float anglePercent = sampleField(x, y) * (1. - ssWeight) + ssAngle * ssWeight;
+	return ofVec3f(0,1,0).getRotated( anglePercent  * 360,  ofVec3f(0,0,1) );
 }
 
-float CloudsVisualSystemVectorFlow::getMagnitude(float x, float y){
-	float chaossqr = powf(chaos,2);	
-	return maxLength * ofNoise(y/chaossqr + ofGetFrameNum()*speed,x/chaossqr);
+
+float CloudsVisualSystemVectorFlow::sampleField(float x, float y){
+	float chaossqr   = powf(chaos,2);
+	float oscillator = sin( oscFrequency*ofGetFrameNum() ) ;
+	float sample = (ofNoise(y/chaossqr + ofGetFrameNum()*speed,  x/chaossqr) + (oscillator * .5 + .5)) * .5;
+	return sample;
 }
 
+void CloudsVisualSystemVectorFlow::getSincSourceAngle(int x, int y, float& angle, float& weight){
+	ofVec2f pos(x,y);
+//	ofVec2f sincToPos = sincPosition - pos;
+	ofVec2f mousePos(ofGetMouseX(),ofGetMouseY());
+	ofVec2f sincToPos = mousePos - pos;
+	float distSq = sincToPos.lengthSquared();
+//	if( distSq < powf(sincRadius, 2) ){
+//	angle = ofVec2f(0, 1).angle(sincToPos) / 360.0;;
+	float sincRadSq = powf(sincRadius*ofGetWidth(),2);
+	if(sincRadius > 0 && distSq < sincRadSq){
+//		angle = ofMap( atan2(y,x) - atan2(mousePos.y,mousePos.x), -PI/2.0, PI/2.0, 0, 1.0 ) ;
+		angle = ofMap( atan2(sincToPos.y,sincToPos.x), -TWO_PI, TWO_PI, -1.0, 1.0 ) ;
+		weight = ofMap(distSq, 0, sincRadSq, 1.0, 0.0, true);
+//		weight = 1.;
+	}
+//		return
+//	}
+//	return 0;
+
+}
 void CloudsVisualSystemVectorFlow::selfDrawBackground(){
     
 	ofPushStyle();
@@ -283,13 +309,16 @@ void CloudsVisualSystemVectorFlow::selfSetupRenderGui(){
 	rdrGui->addSlider("step", 5, 100, &step);
 	rdrGui->addSlider("chaos", 5, 100, &chaos);
 	rdrGui->addSlider("speed", 0, .1, &speed);
+	rdrGui->addSlider("sincRadius", 0, 1.0, &sincRadius);
+	rdrGui->addSlider("fieldAmplitude", .0, 10.0, &fieldAmplitude);
+
+	rdrGui->addSlider("oscFreq", 0, .1, &oscFrequency);
+	
 	rdrGui->addSlider("maxLength", 0, 100, &maxLength);
 	rdrGui->addSlider("fieldAlpha", 0, 1.0, &fieldAlpha);
-
 	
-//	rdrGui->addSlider("speed", 0., 2., &speed);
-//	rdrGui->addSlider("point size", 1., 25., &pointSize);
-//	rdrGui->addSlider("scale", 1., 10., &scale);
+	
+
 }
 
 //--------------------------------------------------------------

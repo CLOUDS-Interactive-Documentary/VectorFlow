@@ -68,16 +68,26 @@ protected:
 	
 	void addParticle();
 	
+	
 	ofVec3f getDirection(float x, float y);
-	float getMagnitude(float x, float y);
+//	float getMagnitude(float x, float y);
+	float sampleField(float x, float y);
 	
 	void initFlowField();
 	bool regenerateFlow;
 	float step;
 	float chaos;
+	float fieldAmplitude;
 	int width, height;
-	float speed;
 	float maxLength;
+	
+	float speed;
+	float oscFrequency;
+	
+	ofVec2f sincPosition;
+	float sincRadius;
+	void getSincSourceAngle(int x, int y, float& angle, float& weight);
+	
 
 	float fieldAlpha;
 };
