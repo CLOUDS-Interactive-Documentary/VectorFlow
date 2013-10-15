@@ -65,12 +65,8 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 
 	//UPDATE PARTICLES
 	for(int i = 0; i < particlesPerFrame; i++){
-
 		addParticle();
-
 	}
-
-
 
 	for(int i = 0; i < particles.size(); i++){
 		FlowParticle& cp = particles[i];
@@ -109,7 +105,6 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 	}
 	
 	//UPDATE LINES
-
 	for(int i = 0; i < lines.getVertices().size(); i += 2){
 		ofVec3f& vert = lines.getVertices()[i];
 		float length = sampleField(vert.x, vert.y);
