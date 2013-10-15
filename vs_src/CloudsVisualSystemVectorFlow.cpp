@@ -28,8 +28,8 @@ void CloudsVisualSystemVectorFlow::initFlowField(){
 	//gives our initial columns
 	cout << "creating " << width/int(step) << " " << height/int(step) << " lines" << endl;
 
-	particleMesh.clear();
 	particles.clear();
+	particleMesh.clear();
 	particleMesh.setMode(OF_PRIMITIVE_LINE_STRIP);
 	
     cout << "adding vertices" << endl;
@@ -48,7 +48,7 @@ void CloudsVisualSystemVectorFlow::initFlowField(){
 
 //--------------------------------------------------------------
 void CloudsVisualSystemVectorFlow::selfSetup(){
-
+	colorMap.loadImage( getVisualSystemDataPath() + "GUI/defaultColorPalette.png" );
 }
 
 void CloudsVisualSystemVectorFlow::selfSetupGuis(){
@@ -67,7 +67,7 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 	for(int i = 0; i < particlesPerFrame; i++){
 		addParticle();
 	}
-
+	
 	for(int i = 0; i < particles.size(); i++){
 		FlowParticle& cp = particles[i];
 		for(int t = trailLength; t > 0; t--){
@@ -78,18 +78,30 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 			particleMesh.getColors()[targetIndex].a = particleMesh.getNormals()[targetIndex].x;
 		}
 		
+		//find magnitude of the field, it'll effect both position and color
 		float magnitude = sampleField(cp.pos.y, cp.pos.x) * maxLength;
 		float magnorm = magnitude/maxLength;
-		float scaledHue = ofMap(magnorm, 0, 1, ofFloatColor::blue.getHue(), ofFloatColor::red.getHue());
+
+		//set position
 		cp.pos += getDirection(cp.pos.x, cp.pos.y) * magnitude;
-		
-		particleMesh.setVertex(cp.index, cp.pos); //set the fence post
+		particleMesh.setVertex(cp.index,   cp.pos); //set the fence post
 		particleMesh.setVertex(cp.index+1, cp.pos);
-		
-		ofFloatColor magnitudeColor = ofFloatColor::fromHsb(scaledHue, 200, 200) ;
-		particleMesh.setColor(cp.index+1, magnitudeColor);
-	
 		particleMesh.setVertex(cp.index + trailLength+1, particleMesh.getVertices()[cp.index+trailLength]); //set the fence post
+		
+		//set color
+		ofFloatColor magnitudeColor;
+		//float scaledHue = ofMap(magnorm, 0, 1, ofFloatColor::blue.getHue(), ofFloatColor::red.getHue());
+		if(interpRGB){
+			magnitudeColor = startColor.getLerped(endColor, magnorm);
+		}
+		else {
+			float scaledHue = ofMap(magnorm, 0, 1, startColor.getHue(), endColor.getHue());
+			float scaledSat = ofMap(magnorm, 0, 1, startColor.getSaturation(), endColor.getSaturation());
+			float scaledBri = ofMap(magnorm, 0, 1, startColor.getBrightness(), endColor.getBrightness());
+			magnitudeColor = ofFloatColor::fromHsb(scaledHue, scaledSat, scaledBri);
+		}
+//		ofFloatColor magnitudeColor = ofFloatColor::fromHsb(scaledHue, 200, 200) ;
+		particleMesh.setColor(cp.index+1, magnitudeColor);
 	}
 
 	ofRectangle screenRect(0,0,width,height);
@@ -213,10 +225,28 @@ void CloudsVisualSystemVectorFlow::selfDrawBackground(){
 	ofSetColor(255);
 	ofSetLineWidth(1);
 	
+	if(blendAdd){
+		ofEnableBlendMode(OF_BLENDMODE_ADD);
+	}
+	else{
+		ofEnableAlphaBlending();
+	}
+	
 	lines.draw();
 	particleMesh.draw();
 	
+//	ofSetColor(startColor);
+//	ofRect(0,0,100,100);
+//	ofSetColor(endColor);
+//	ofRect(100,0,100,100);
+	
+	if(!bClearBackground){
+		ofEnableAlphaBlending();
+		ofSetColor(0,0,0, 5);
+		ofRect(0, 0, ofGetWidth(), ofGetHeight());
+	}
 	ofPopStyle();
+
 }
 
 void CloudsVisualSystemVectorFlow::selfDrawDebug(){
@@ -295,6 +325,7 @@ void CloudsVisualSystemVectorFlow::guiSystemEvent(ofxUIEventArgs &e){
 }
 
 void CloudsVisualSystemVectorFlow::selfSetupRenderGui(){
+	
 	rdrGui->addSlider("maxVerts", 10000, 100000, &generateMaxVerts);
 	rdrGui->addSlider("trail length", 5, 100, &generateTrailLength);
 	rdrGui->addButton("regenerate", false);
@@ -312,7 +343,11 @@ void CloudsVisualSystemVectorFlow::selfSetupRenderGui(){
 	rdrGui->addSlider("maxLength", 0, 100, &maxLength);
 	rdrGui->addSlider("fieldAlpha", 0, 1.0, &fieldAlpha);
 	
-	
+	rdrGui->addImageSampler("startColor", &colorMap, colorMap.getWidth()/2., colorMap.getHeight()/2. );
+	rdrGui->addImageSampler("endColor", &colorMap, colorMap.getWidth()/2., colorMap.getHeight()/2. );
+	rdrGui->addToggle("Interpolate RGB", &interpRGB);
+	rdrGui->addToggle("Refresh Bg", &bClearBackground);
+	rdrGui->addToggle("Blend Add", &blendAdd);
 
 }
 
@@ -320,6 +355,14 @@ void CloudsVisualSystemVectorFlow::selfSetupRenderGui(){
 void CloudsVisualSystemVectorFlow::guiRenderEvent(ofxUIEventArgs &e){
 	if(e.widget->getName() == "regenerate"){
 		regenerateFlow = true;
+	}
+	else if( e.widget->getName() == "startColor"){
+		ofxUIImageSampler* sampler = (ofxUIImageSampler *) e.widget;
+		startColor = sampler->getColor();
+	}
+	else if( e.widget->getName() == "endColor"){
+		ofxUIImageSampler* sampler = (ofxUIImageSampler *) e.widget;
+		endColor = sampler->getColor();
 	}
 }
 

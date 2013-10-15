@@ -68,7 +68,6 @@ protected:
 	
 	void addParticle();
 	
-	
 	ofVec3f getDirection(float x, float y);
 //	float getMagnitude(float x, float y);
 	float sampleField(float x, float y);
@@ -83,6 +82,12 @@ protected:
 	
 	float speed;
 	float oscFrequency;
+	
+	ofImage colorMap;
+	ofFloatColor startColor;
+	ofFloatColor endColor;
+	bool interpRGB;
+	bool blendAdd;
 	
 	ofVec2f sincPosition;
 	float sincRadius;
