@@ -1,0 +1,112 @@
+<Canvas>
+    <Kind>42</Kind>
+    <Name>RenderSettings</Name>
+    <IsMinified>0</IsMinified>
+    <XPosition>1010.000000000</XPosition>
+    <YPosition>30.000000000</YPosition>
+</Canvas>
+<Widget>
+    <Kind>4</Kind>
+    <Name>maxVerts</Name>
+    <Value>78719.210937500</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>trail length</Name>
+    <Value>5.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>birthrate</Name>
+    <Value>100.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>step</Name>
+    <Value>85.492607117</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>chaos</Name>
+    <Value>100.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>speed</Name>
+    <Value>-0.002463058</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>chaos2</Name>
+    <Value>100.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>speed2</Name>
+    <Value>0.003448270</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>sincRadius</Name>
+    <Value>0.103448279</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>fieldAmplitude</Name>
+    <Value>0.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>oscFreq</Name>
+    <Value>0.068965517</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>oscAmp</Name>
+    <Value>0.100000001</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>maxLength</Name>
+    <Value>2.463054180</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>fieldAlpha</Name>
+    <Value>0.438423634</Value>
+</Widget>
+<Widget>
+    <Kind>28</Kind>
+    <Name>startColor</Name>
+    <XValue>0.921875000</XValue>
+    <YValue>0.742187500</YValue>
+    <RColor>54</RColor>
+    <GColor>54</GColor>
+    <BColor>54</BColor>
+    <AColor>255</AColor>
+</Widget>
+<Widget>
+    <Kind>28</Kind>
+    <Name>endColor</Name>
+    <XValue>0.929687500</XValue>
+    <YValue>0.960937500</YValue>
+    <RColor>6</RColor>
+    <GColor>7</GColor>
+    <BColor>6</BColor>
+    <AColor>255</AColor>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>Interpolate RGB</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>Refresh Bg</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>Blend Add</Name>
+    <Value>1</Value>
+</Widget>

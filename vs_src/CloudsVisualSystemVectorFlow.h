@@ -76,12 +76,16 @@ protected:
 	bool regenerateFlow;
 	float step;
 	float chaos;
+	float chaos2;
+	float speed;	
+	float speed2;
 	float fieldAmplitude;
 	int width, height;
 	float maxLength;
 	
-	float speed;
+
 	float oscFrequency;
+	float oscAmp;
 	
 	ofImage colorMap;
 	ofFloatColor startColor;

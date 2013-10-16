@@ -9,6 +9,7 @@ CloudsVisualSystemVectorFlow::CloudsVisualSystemVectorFlow(){
 	particlesPerFrame = 0;
 	chaos = 0;
 	speed = 0;
+	oscAmp = .5;
 	sincPosition = ofVec2f(.5,.5);
 	sincRadius = 0;
 }
@@ -79,8 +80,8 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 		}
 		
 		//find magnitude of the field, it'll effect both position and color
-		float magnitude = sampleField(cp.pos.y, cp.pos.x) * maxLength;
-		float magnorm = magnitude/maxLength;
+		float magnorm = sampleField(cp.pos.y, cp.pos.x);
+		float magnitude = magnorm * maxLength;
 
 		//set position
 		cp.pos += getDirection(cp.pos.x, cp.pos.y) * magnitude;
@@ -105,6 +106,7 @@ void CloudsVisualSystemVectorFlow::selfUpdate(){
 	}
 
 	ofRectangle screenRect(0,0,width,height);
+	screenRect.scale(2.);
 	for(int i = 0; i < particles.size(); i++){
 		FlowParticle& cp = particles[i];
 		cp.dead = true;
@@ -134,7 +136,8 @@ void CloudsVisualSystemVectorFlow::addParticle(){
 
 		if(p.dead){
 			p.dead = false;
-			p.pos = ofVec3f( ofRandom(width), ofRandom(height), 0 );
+
+			p.pos = ofVec3f( ofRandom(-width*.2, width*1.2), ofRandom(-height*.2,height*1.2), 0 );
 			
 			//alpha fence post begin
 			particleMesh.setVertex(p.index, p.pos ); //at p.index
@@ -182,7 +185,8 @@ void CloudsVisualSystemVectorFlow::addParticle(){
 }
 
 ofVec3f CloudsVisualSystemVectorFlow::getDirection(float x, float y){
-//	return ofVec3f(0,1,0).getRotated( sampleField(x,y) * 360, ofVec3f(0,0,1) );
+
+ 	//weight between the vortex of the mouse and the actual flow position
 	float ssWeight = 0;
 	float ssAngle = 0;
 	getSincSourceAngle(x,y,ssAngle,ssWeight);
@@ -193,8 +197,11 @@ ofVec3f CloudsVisualSystemVectorFlow::getDirection(float x, float y){
 
 float CloudsVisualSystemVectorFlow::sampleField(float x, float y){
 	float chaossqr   = powf(chaos,2);
+	float chaossqr2  = powf(chaos2,2);
 	float oscillator = sin( oscFrequency*ofGetFrameNum() ) ;
-	float sample = (ofNoise(y/chaossqr + ofGetFrameNum()*speed,  x/chaossqr) + (oscillator * .5 + .5)) * .5;
+	//float sample = (ofNoise(y/chaossqr + ofGetFrameNum()*speed,  x/chaossqr) + (oscillator * .5 + .5)) * oscAmp;
+	float sample = ofNoise(y/chaossqr + ofGetFrameNum()*speed,   x/chaossqr)*.5 +
+				   ofNoise(y/chaossqr2 + ofGetFrameNum()*speed2, x/chaossqr2)*.5;
 	return sample;
 }
 
@@ -334,11 +341,14 @@ void CloudsVisualSystemVectorFlow::selfSetupRenderGui(){
 	
 	rdrGui->addSlider("step", 5, 100, &step);
 	rdrGui->addSlider("chaos", 5, 100, &chaos);
-	rdrGui->addSlider("speed", 0, .1, &speed);
+	rdrGui->addSlider("speed", -.1, .1, &speed);
+	rdrGui->addSlider("chaos2", 5, 100, &chaos2);
+	rdrGui->addSlider("speed2", -.1, .1, &speed2);
 	rdrGui->addSlider("sincRadius", 0, 1.0, &sincRadius);
 	rdrGui->addSlider("fieldAmplitude", .0, 10.0, &fieldAmplitude);
 
 	rdrGui->addSlider("oscFreq", 0, .1, &oscFrequency);
+	rdrGui->addSlider("oscAmp", 0, .1, &oscAmp);
 	
 	rdrGui->addSlider("maxLength", 0, 100, &maxLength);
 	rdrGui->addSlider("fieldAlpha", 0, 1.0, &fieldAlpha);
