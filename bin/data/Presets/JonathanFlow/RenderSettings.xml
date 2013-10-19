@@ -1,19 +1,19 @@
 <Canvas>
     <Kind>42</Kind>
     <Name>RenderSettings</Name>
-    <IsMinified>0</IsMinified>
-    <XPosition>213.000000000</XPosition>
-    <YPosition>1.000000000</YPosition>
+    <IsMinified>1</IsMinified>
+    <XPosition>1.000000000</XPosition>
+    <YPosition>49.000000000</YPosition>
 </Canvas>
 <Widget>
     <Kind>4</Kind>
     <Name>maxVerts</Name>
-    <Value>64532.019531250</Value>
+    <Value>78719.210937500</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>trail length</Name>
-    <Value>14.359605789</Value>
+    <Value>5.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -23,12 +23,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>step</Name>
-    <Value>31.206895828</Value>
+    <Value>100.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>chaos</Name>
-    <Value>45.246303558</Value>
+    <Value>41.502464294</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -38,7 +38,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>sincRadius</Name>
-    <Value>0.620689631</Value>
+    <Value>0.103448279</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -48,12 +48,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>oscFreq</Name>
-    <Value>0.003940887</Value>
+    <Value>0.068965517</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>maxLength</Name>
-    <Value>10.837438583</Value>
+    <Value>9.359605789</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -63,21 +63,21 @@
 <Widget>
     <Kind>28</Kind>
     <Name>startColor</Name>
-    <XValue>0.945312500</XValue>
-    <YValue>0.929687500</YValue>
-    <RColor>11</RColor>
-    <GColor>12</GColor>
-    <BColor>11</BColor>
+    <XValue>0.460937500</XValue>
+    <YValue>0.398437500</YValue>
+    <RColor>45</RColor>
+    <GColor>0</GColor>
+    <BColor>52</BColor>
     <AColor>255</AColor>
 </Widget>
 <Widget>
     <Kind>28</Kind>
     <Name>endColor</Name>
-    <XValue>0.937500000</XValue>
-    <YValue>1.000000000</YValue>
+    <XValue>0.421875000</XValue>
+    <YValue>0.429687500</YValue>
     <RColor>1</RColor>
-    <GColor>1</GColor>
-    <BColor>1</BColor>
+    <GColor>14</GColor>
+    <BColor>28</BColor>
     <AColor>255</AColor>
 </Widget>
 <Widget>
